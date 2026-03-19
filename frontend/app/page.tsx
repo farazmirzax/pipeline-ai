@@ -9,6 +9,15 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ report: string; code: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCode = async () => {
+    if (result?.code) {
+      await navigator.clipboard.writeText(result.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,13 +143,48 @@ export default function Home() {
         <div className="space-y-8 animate-fade-in">
           <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-xl">
             <h2 className="text-2xl font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">Business Report</h2>
-            <div className="prose prose-invert max-w-none text-slate-300">
-              <ReactMarkdown>{result.report}</ReactMarkdown>
+            <div className="text-slate-300">
+              <ReactMarkdown
+                components={{
+                  h1: ({node, ...props}) => <h1 className="text-2xl font-bold mt-8 mb-4 text-emerald-400" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-xl font-bold mt-6 mb-3 text-emerald-400" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-lg font-bold mt-4 mb-2 text-emerald-300" {...props} />,
+                  p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 space-y-2 marker:text-emerald-500" {...props} />,
+                  ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 space-y-2 marker:text-emerald-500" {...props} />,
+                  li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                  strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />
+                }}
+              >
+                {result.report}
+              </ReactMarkdown>
             </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-xl">
-            <h2 className="text-2xl font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">Generated ML Pipeline</h2>
+            <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+              <h2 className="text-2xl font-bold text-slate-100">Generated ML Pipeline</h2>
+              <button
+                onClick={handleCopyCode}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2"
+              >
+                {copied ? (
+                  <>
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy Code
+                  </>
+                )}
+              </button>
+            </div>
             <pre className="bg-slate-950 p-4 rounded-lg overflow-x-auto text-sm text-emerald-400 border border-slate-800">
               <code>{result.code}</code>
             </pre>
