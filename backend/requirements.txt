@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+langgraph
+langchain-core
+langchain-community
+pandas
+scikit-learn
+python-multipart
