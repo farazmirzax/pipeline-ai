@@ -369,12 +369,13 @@ pipeline-ai/
 │   ├── next.config.ts                  # Next.js config
 │   └── .gitignore                      # Excludes node_modules, .next
 │
-├── docs/                               # 📸 Screenshots & GIFs
-│   ├── demo.gif                        # Screen recording
+├── media/                              # 📸 Screenshots & GIFs
+│   ├── Demo.gif                        # Screen recording
 │   ├── screenshot-1-upload.png         # Upload interface
 │   ├── screenshot-2-loading.png        # Loading state
-│   ├── screenshot-3-report.png         # Business report
-│   └── screenshot-4-code.png           # ML code output
+│   ├── screenshot-3-report first part.png  # Business report (part 1)
+│   ├── screenshot-4-report second.png      # Business report (part 2)
+│   └── screenshot-5-generated-ml-pipeline.png  # ML code output
 │
 ├── README.md                           # This file
 ├── .gitignore                          # Root .gitignore
