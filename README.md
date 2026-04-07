@@ -592,6 +592,13 @@ docker run -p 3000:3000 pipeline-ai-frontend
 | **Startup Time** | ~50ms | ~500ms |
 | **ML Model Serving** | Popular (PyTorch, TF use it) | More web-centric |
 
+### Architectural Scalability & Modularity
+
+Pipeline.ai's architecture is **deliberately modular** to support frictionless scaling:
+- **Data Layer Abstraction**: The `DataEngineer` agent interfaces via a `cleaned_data_path` state variable. Downstream agents (MLArchitect, QA, BusinessAnalyst) remain agnostic to data source—swap CSV for Snowflake/BigQuery with ~5 lines of code change.
+- **Framework Agnosticism**: The `MLArchitect` generates any valid Python syntax. It can be prompted to produce PyTorch, TensorFlow, or scikit-learn code without architectural refactoring.
+- **Horizontal Scalability**: Stateless FastAPI backend scales across Kubernetes clusters; LangGraph agents can be distributed across compute infrastructure via Ray or custom orchestrators.
+
 ---
 
 ## 🏆 Challenges & Solutions
@@ -670,16 +677,54 @@ while (true) {
 
 ---
 
-## 🔮 Future Enhancements
+## 🔮 Future Enhancements & Enterprise Scaling Roadmap
 
-- [ ] Support for deep learning models (PyTorch/TensorFlow)
-- [ ] Multi-GPU support for large datasets
+### Short-term (Next 3 months)
+- [ ] Support for deep learning models (PyTorch, TensorFlow)
+- [ ] Multi-GPU support for large datasets  
 - [ ] Custom agent personas (allow users to define their own)
-- [ ] Model deployment to cloud (AWS SageMaker, GCP Vertex AI)
-- [ ] A/B testing framework for model comparison
-- [ ] Real-time feature importance visualization
 - [ ] Automated hyperparameter tuning agent
-- [ ] Integration with data warehouses (Snowflake, BigQuery)
+- [ ] Real-time feature importance visualization
+- [ ] A/B testing framework for model comparison
+
+### Medium-term (3-6 months) - Enterprise Data Integration
+**Why this matters:** Move beyond local CSV files to enterprise-scale data sources without rewriting core agent logic.
+
+- [ ] **Snowflake Integration** - Direct data ingestion via `snowflake.connector` (minimal DataEngineer changes)
+- [ ] **BigQuery Querying** - Google Cloud data warehouse support with federated analysis
+- [ ] **Postgres/SQL Warehouses** - Generic `sqlalchemy` backend for any SQL database
+- [ ] **Real-time Kafka Streams** - Process continuously flowing data instead of batch CSVs
+- [ ] **AWS S3/Data Lake** - Multi-format support (Parquet, ORC, Delta Lake)
+
+**Technical Impact:** Modify only `DataEngineer.read_data()` method; all downstream agents remain unchanged due to state abstraction.
+
+### Long-term (6-12 months) - Deep Learning & Advanced Models
+**Why this matters:** Support production ML workloads beyond traditional scikit-learn, competing with enterprise platforms like SageMaker.
+
+- [ ] **PyTorch/Hugging Face Integration** - Train Transformers, vision models, LLMs for enterprise use cases
+- [ ] **TensorFlow/Keras Support** - Enterprise deep learning infrastructure compatibility
+- [ ] **XGBoost/LightGBM** - Gradient boosting for structured data (enterprise standard)
+- [ ] **Model Deployment to AWS SageMaker** - Turn generated models into production endpoints
+- [ ] **GCP Vertex AI Integration** - Serverless model training & deployment
+- [ ] **Kubernetes Orchestration** - Distribute agents across compute clusters using Ray or custom operators
+- [ ] **Multi-GPU Training** - Parallelize model training on high-end GPU clusters
+- [ ] **GPU-Optimized Inference** - Deploy models on edge devices or inference engines (TensorRT, ONNX)
+
+### Strategic Advantages
+
+| Current State | Future Vision | Competitive Advantage |
+|---------------|---------------|---------------------|
+| CSV uploads | Enterprise data warehouses (Snowflake, BigQuery) | Zero friction migration path vs platforms that require rewrite |
+| scikit-learn only | PyTorch, TensorFlow, Hugging Face | Support 99% of production ML use cases |
+| Local compute | Kubernetes + AWS/GCP cloud | Scales from laptop to GPU clusters automatically |
+| Demo models | Production ML pipelines | Enterprise-ready with built-in deployment paths |
+
+**Why These Enhancements Don't Require Architectural Refactoring:**
+- State-based agent design means new data sources = new DataEngineer implementation, zero changes to orchestrator
+- Framework-agnostic code generation means MLArchitect can prompt-switch between PyTorch/scikit-learn/TensorFlow
+- Modular deployment means same FastAPI backend runs locally or on Kubernetes without code modification
+
+Unlike monolithic "AutoML" platforms, Pipeline.ai can grow from startup hobby project to enterprise ML backbone without rewriting core logic.
 
 ---
 
